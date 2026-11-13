@@ -204,6 +204,29 @@
       background: linear-gradient(90deg, rgba(255,179,65,.10), rgba(255,179,65,0)); border: 1px solid rgba(255,179,65,.35); color: var(--text); }
     .calc-note svg { color: var(--warn); flex: none; }
 
+    /* Arrêt automatique */
+    .autopit { margin-top: 18px; padding: 32px; display: grid; grid-template-columns: 1.25fr 0.75fr; gap: 40px; align-items: center;
+      border-color: rgba(61,139,255,.55); box-shadow: var(--card-shadow), 0 0 0 1px rgba(61,139,255,.15), 0 0 40px rgba(61,139,255,.18);
+      background: radial-gradient(420px 220px at 100% 0%, rgba(61,139,255,.16), transparent 70%), var(--card-bg); }
+    .autopit > * { min-width: 0; }
+    .autopit h3 { font-size: clamp(26px, 3vw, 34px); }
+    .autopit-text > p { margin-top: 14px; color: var(--text-2); }
+    .autopit-list { list-style: none; padding: 0; margin: 20px 0 0; display: grid; gap: 10px; }
+    .autopit-list li { position: relative; padding-left: 28px; color: var(--text-2); font-size: 16px; }
+    .autopit-list li::before { content: ""; position: absolute; left: 2px; top: 6px; width: 12px; height: 7px; border-left: 2px solid var(--accent-soft); border-bottom: 2px solid var(--accent-soft); transform: rotate(-45deg); }
+    .autopit-lmu { margin-top: 20px !important; display: flex; flex-wrap: wrap; align-items: center; gap: 10px; font-size: 15px; color: var(--muted) !important; }
+    .badge-dev { display: inline-flex; align-items: center; gap: 6px; padding: 5px 10px; border-radius: 999px; font: 600 12px/1 var(--font); letter-spacing: .06em; text-transform: uppercase;
+      color: var(--warn); background: rgba(255,179,65,.1); border: 1px solid rgba(255,179,65,.4); }
+    .badge-dev::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--warn); }
+    .pitbox { border-radius: 12px; padding: 20px; background: #070b12; border: 1px solid var(--line-strong); box-shadow: inset 0 2px 4px rgba(0,0,0,.6); }
+    .pitbox-head { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px; padding-bottom: 14px; border-bottom: 1px solid var(--line); }
+    .pitbox .ok { display: inline-flex; align-items: center; gap: 7px; color: var(--gain); font-size: 13px; font-weight: 600; }
+    .pitbox .ok i { width: 8px; height: 8px; border-radius: 50%; background: var(--gain); box-shadow: 0 0 10px var(--gain); }
+    .pitbox-row { display: flex; justify-content: space-between; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--line); color: var(--muted); font-size: 15px; }
+    .pitbox-row b { color: var(--text); font-weight: 600; font-size: 17px; }
+    .pitbox-row b.num { font-size: 22px; color: var(--brand); }
+    .pitbox-radio { margin-top: 14px; color: var(--accent-soft); font-size: 14.5px; line-height: 1.5; }
+
     /* Radio */
     .radio { padding: 22px 22px 18px; }
     .radio-head { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
@@ -292,6 +315,7 @@
       .grid-3, .steps { grid-template-columns: 1fr 1fr; }
       .privacy { grid-template-columns: 1fr 1fr; }
       .split .shot { order: -1; }
+      .autopit { grid-template-columns: 1fr; gap: 28px; }
     }
     @media (max-width: 760px) {
       body { font-size: 16px; }
@@ -301,6 +325,7 @@
       .menu-btn { display: grid; }
       .header .btn { display: none; }
       .grid-3, .steps, .sims, .privacy { grid-template-columns: 1fr; }
+      .autopit { padding: 22px 18px; }
       .delta-card { padding: 18px 18px 20px; }
       .delta-card .row { flex-wrap: wrap; }
       .delta-card .delta-value { order: -1; flex-basis: 100%; text-align: center; margin-bottom: 6px; }
@@ -502,6 +527,27 @@
           <svg width="22" height="22" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2 3 6v4c0 4 3 7 7 8 4-1 7-4 7-8V6z"/><path d="m7 10 2 2 4-4"/></svg>
           <span>Ces décisions sont calculées, sans IA : elles arrivent tout de suite et ne peuvent pas inventer un chiffre.</span>
         </div>
+
+        <div class="card autopit reveal">
+          <div class="autopit-text">
+            <div class="kicker blue">Arrêt automatique · iRacing</div>
+            <h3>La bonne stratégie, réglée dans le jeu. Sans rien toucher.</h3>
+            <p>Sur iRacing, SEKTOR ne se contente pas de te dire quoi faire : à l'entrée de la voie des stands, il règle lui-même dans le jeu le carburant de son plan et les pneus, à partir des données de ta course. Pas de boîte noire à ouvrir, pas de litres à compter en roulant : tu rentres, l'arrêt est déjà prêt, et l'ingénieur te l'annonce.</p>
+            <ul class="autopit-list">
+              <li>Carburant calculé sur ta consommation réelle, mesurée sur tes tours propres.</li>
+              <li>Pneus changés si nécessaire, toujours ou jamais : c'est toi qui choisis.</li>
+              <li>Tu gardes la main : ce que tu modifies ensuite dans la voie des stands est conservé.</li>
+            </ul>
+            <p class="autopit-lmu"><span class="badge-dev">En développement</span> Sur Le Mans Ultimate, l'arrêt automatique est en cours de développement.</p>
+          </div>
+          <div class="pitbox" aria-label="Exemple d'arrêt réglé automatiquement dans iRacing">
+            <div class="pitbox-head"><span class="label">Entrée des stands · T14</span><span class="ok"><i></i>Appliqué dans iRacing</span></div>
+            <div class="pitbox-row"><span>Carburant</span><b class="num">+27 L</b></div>
+            <div class="pitbox-row"><span>Pneus</span><b>4 neufs</b></div>
+            <div class="pitbox-row"><span>Sortie prévue</span><b>P10 · piste libre</b></div>
+            <div class="pitbox-radio">« Arrêt réglé dans le jeu : 27 litres, quatre pneus neufs. »</div>
+          </div>
+        </div>
       </div>
     </section>
 
@@ -556,6 +602,7 @@
             <ul>
               <li><b>Virages nommés</b> sur 271 tracés, d'après les repères de Crew Chief.</li>
               <li><b>Stratégie complète</b> : carburant, arrêts du plateau, undercut, pluie, dégradation.</li>
+              <li><b>Arrêt automatique</b> : le carburant et les pneus du plan sont réglés dans le jeu à l'entrée des stands, sans intervention de ta part.</li>
               <li><b>Chronos fidèles</b> : 2,1 ms d'écart au plus avec ceux du simulateur.</li>
             </ul>
           </div>
@@ -566,6 +613,7 @@
               <li><b>Énergie virtuelle</b> en Hypercar et en GT3 : le relais est calé sur la première ressource épuisée, carburant ou énergie.</li>
               <li><b>Usure des pneus en direct</b>, pneu par pneu, avec une alerte trois tours avant la limite.</li>
               <li><b>Limites de piste</b> : chaque point pris est annoncé, avec ce qu'il reste avant la pénalité.</li>
+              <li><b>Arrêt automatique</b> : <span class="badge-dev">En développement</span></li>
             </ul>
           </div>
         </div>
