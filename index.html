@@ -1,0 +1,738 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SEKTOR — coach de pilotage pour iRacing et Le Mans Ultimate</title>
+  <meta name="description" content="SEKTOR compare chaque passage à ton meilleur tour, virage par virage, calcule ton tour théorique et tient la stratégie de course. Coach de pilotage local pour iRacing et Le Mans Ultimate, sous Windows.">
+  <meta name="theme-color" content="#06090f">
+  <link rel="icon" type="image/png" href="img/icon-256.png">
+  <link rel="apple-touch-icon" href="img/icon-256.png">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="SEKTOR — chaque dixième perdu a une adresse">
+  <meta property="og:description" content="Coach de pilotage local pour iRacing et Le Mans Ultimate : coaching virage par virage, tour théorique, stratégie de course et ingénieur à la radio.">
+  <meta property="og:image" content="https://andyd9.github.io/Sektor/img/og.jpg">
+  <meta property="og:locale" content="fr_FR">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Saira+Semi+Condensed:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #06090f;
+      --bg-2: #0a0f17;
+      --surface: #0c121c;
+      --surface-2: #131c2a;
+      --line: #1c2738;
+      --line-strong: #263244;
+      --card-bg: linear-gradient(180deg, #121b29 0%, #0c121c 100%);
+      --card-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06), 0 1px 0 rgba(0, 0, 0, 0.7), 0 14px 32px rgba(0, 0, 0, 0.35);
+      --text: #eef3fa;
+      --text-2: #c9d2de;
+      --muted: #8e9bb0;
+      --brand: #e6f01b;
+      --accent: #3d8bff;
+      --accent-soft: #6ea8ff;
+      --best: #b46bff;
+      --best-soft: #d6b4ff;
+      --gain: #34d27b;
+      --warn: #ffb341;
+      --font: "Inter", "Segoe UI", system-ui, sans-serif;
+      --display: "Saira Semi Condensed", "Bahnschrift", "Segoe UI", system-ui, sans-serif;
+      --r: 14px;
+      --wrap: 1180px;
+      color-scheme: dark;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; scroll-padding-top: 76px; }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text-2);
+      font: 400 17px/1.6 var(--font);
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+    img { max-width: 100%; display: block; }
+    a { color: var(--accent-soft); text-decoration: none; }
+    a:hover { color: var(--text); }
+    h1, h2, h3 { font-family: var(--display); color: var(--text); line-height: 1.08; margin: 0; letter-spacing: 0.005em; }
+    h2 { font-size: clamp(34px, 4.6vw, 54px); font-weight: 700; }
+    h3 { font-size: 22px; font-weight: 700; }
+    p { margin: 0; }
+    .wrap { width: min(var(--wrap), 100% - 32px); margin-inline: auto; }
+    .num { font-family: var(--display); font-variant-numeric: tabular-nums; }
+
+    /* Liseré du haut, comme dans l'application */
+    .topline { position: fixed; inset: 0 0 auto 0; height: 3px; z-index: 60;
+      background: linear-gradient(90deg, var(--brand) 0 60%, var(--accent) 60% 100%); }
+
+    /* ---------- En-tête ---------- */
+    .header { position: sticky; top: 0; z-index: 50; background: rgba(6, 9, 15, 0.78);
+      backdrop-filter: blur(14px) saturate(140%); -webkit-backdrop-filter: blur(14px) saturate(140%);
+      border-bottom: 1px solid rgba(38, 50, 68, 0.6); }
+    .header .wrap { display: flex; align-items: center; gap: 28px; height: 68px; padding-top: 3px; }
+    .header .logo img { height: 34px; width: auto; }
+    .nav { display: flex; gap: 26px; margin-left: auto; }
+    .nav a { color: var(--muted); font-weight: 500; font-size: 15px; }
+    .nav a:hover { color: var(--text); }
+    .menu-btn { display: none; margin-left: auto; background: none; border: 1px solid var(--line-strong); color: var(--text);
+      border-radius: 8px; width: 42px; height: 38px; cursor: pointer; }
+    .menu-btn svg { margin: auto; }
+
+    /* ---------- Boutons ---------- */
+    .btn { display: inline-flex; align-items: center; gap: 10px; padding: 13px 22px; border-radius: 10px;
+      font: 600 16px/1 var(--font); border: 1px solid transparent; cursor: pointer; transition: box-shadow .2s, transform .1s, background .2s; white-space: nowrap; }
+    .btn:active { transform: translateY(1px); }
+    .btn-neon { color: #fff; background: linear-gradient(180deg, #62a8ff 0%, #3d8bff 55%, #2a72e6 100%); border-color: #8ec0ff;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.45), inset 0 -2px 0 rgba(0,40,120,.35), 0 0 0 1px rgba(61,139,255,.3), 0 0 18px rgba(61,139,255,.55), 0 4px 10px rgba(0,0,0,.45); }
+    .btn-neon:hover { color: #fff; box-shadow: inset 0 1px 0 rgba(255,255,255,.5), inset 0 -2px 0 rgba(0,40,120,.35), 0 0 0 1px rgba(110,168,255,.55), 0 0 30px rgba(61,139,255,.85), 0 4px 12px rgba(0,0,0,.45); }
+    .btn-ghost { color: var(--text); background: linear-gradient(180deg, #1b2638 0%, #121b29 100%); border-color: var(--line-strong);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.07), 0 2px 6px rgba(0,0,0,.35); }
+    .btn-ghost:hover { color: var(--text); background: linear-gradient(180deg, #223049 0%, #162133 100%); }
+    .btn-sm { padding: 10px 16px; font-size: 14px; }
+
+    /* ---------- Hero ---------- */
+    .hero { position: relative; padding: 84px 0 40px; isolation: isolate; }
+    .hero::before { content: ""; position: absolute; inset: -120px 0 0; z-index: -1; pointer-events: none;
+      background:
+        radial-gradient(600px 380px at 82% 6%, rgba(230, 240, 27, 0.13), transparent 70%),
+        radial-gradient(700px 460px at 10% 30%, rgba(61, 139, 255, 0.18), transparent 70%); }
+    .hero-grid { display: grid; grid-template-columns: 1.05fr 0.95fr; gap: 48px; align-items: center; }
+    .hero-grid > *, .split > * { min-width: 0; }
+    .eyebrow { display: inline-flex; align-items: center; gap: 10px; padding: 7px 14px; border-radius: 999px;
+      background: rgba(52, 210, 123, 0.08); border: 1px solid rgba(52, 210, 123, 0.25); color: var(--gain);
+      font: 600 13px/1 var(--font); letter-spacing: .08em; text-transform: uppercase; }
+    .eyebrow .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--gain); box-shadow: 0 0 10px var(--gain); animation: pulse 2s infinite; }
+    @keyframes pulse { 50% { opacity: .35; } }
+    .hero h1 { font-size: clamp(46px, 6.6vw, 84px); font-weight: 800; margin: 22px 0 22px; }
+    .hero h1 .hl { color: var(--brand); text-shadow: 0 0 34px rgba(230, 240, 27, 0.35); }
+    .lead { font-size: clamp(18px, 1.6vw, 20px); color: var(--text-2); max-width: 36em; }
+    .cta-row { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 32px; }
+    .reassure { display: flex; flex-wrap: wrap; gap: 8px 22px; margin-top: 26px; color: var(--muted); font-size: 14px; }
+    .reassure span { display: inline-flex; align-items: center; gap: 8px; }
+    .reassure svg { color: var(--gain); flex: none; }
+
+    /* Carte delta du hero, reprise de l'application */
+    .delta-stack { position: relative; display: grid; gap: 14px; }
+    .card { background: var(--card-bg); border: 1px solid var(--line); border-top-color: #2a3850; border-radius: var(--r); box-shadow: var(--card-shadow); }
+    .delta-card { padding: 22px 26px 24px; }
+    .delta-card .row { display: flex; justify-content: space-between; align-items: flex-end; gap: 16px; }
+    .label { font: 600 12px/1 var(--font); letter-spacing: .14em; text-transform: uppercase; color: var(--muted); }
+    .delta-card .small { font-size: 26px; font-weight: 700; color: var(--text); margin-top: 8px; }
+    .delta-value { font-size: clamp(64px, 8vw, 92px); font-weight: 800; line-height: 1; color: var(--brand);
+      text-shadow: 0 0 30px rgba(230, 240, 27, .35); transition: color .4s, text-shadow .4s; }
+    .delta-value.gain { color: var(--gain); text-shadow: 0 0 30px rgba(52, 210, 123, .35); }
+    .gauge { position: relative; height: 8px; margin-top: 20px; border-radius: 4px; background: #070b12; box-shadow: inset 0 2px 4px rgba(0,0,0,.6); }
+    .gauge i { position: absolute; top: 0; bottom: 0; left: 50%; border-radius: 4px; background: var(--brand); transition: all .4s; }
+    .gauge::after { content: ""; position: absolute; left: 50%; top: -5px; bottom: -5px; width: 2px; background: var(--text); border-radius: 1px; }
+    .leds { display: flex; gap: 5px; margin-top: 14px; }
+    .leds b { height: 6px; flex: 1; border-radius: 3px; background: var(--line-strong); }
+    .leds b.g { background: var(--gain); } .leds b.y { background: var(--brand); } .leds b.v { background: var(--best); } .leds b.c { background: #c9d2de; }
+    .msg-card { padding: 18px 22px 18px 24px; border-left: 4px solid var(--brand); transition: border-color .4s; }
+    .msg-card.gain { border-left-color: var(--gain); }
+    .msg-card .row { display: flex; justify-content: space-between; gap: 12px; align-items: baseline; }
+    .msg-card h3 { font-size: 19px; text-transform: uppercase; letter-spacing: .04em; }
+    .msg-card .d { font-weight: 700; font-size: 19px; color: var(--brand); }
+    .msg-card.gain .d { color: var(--gain); }
+    .msg-card p { margin-top: 6px; color: var(--text); }
+
+    /* ---------- Capture principale ---------- */
+    .shot { position: relative; border-radius: 16px; padding: 1px; background: linear-gradient(140deg, rgba(230,240,27,.55), rgba(38,50,68,.8) 30%, rgba(38,50,68,.8) 70%, rgba(61,139,255,.7));
+      box-shadow: 0 40px 90px rgba(0,0,0,.6), 0 0 80px rgba(61,139,255,.12); }
+    .shot img { border-radius: 15px; width: 100%; height: auto; }
+    .shot-caption { margin-top: 14px; color: var(--muted); font-size: 14px; text-align: center; }
+    .showcase { padding: 32px 0 20px; }
+
+    /* ---------- Chiffres ---------- */
+    .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; margin: 72px 0 0; background: var(--line); border: 1px solid var(--line); border-radius: var(--r); overflow: hidden; }
+    .stat { background: var(--bg-2); padding: 26px 24px; }
+    .stat .v { font-size: 44px; font-weight: 700; color: var(--text); line-height: 1; }
+    .stat .v small { font-size: 22px; color: var(--muted); margin-left: 4px; }
+    .stat p { margin-top: 10px; font-size: 14px; color: var(--muted); line-height: 1.45; }
+
+    /* ---------- Sections ---------- */
+    section.block { padding: 120px 0 0; }
+    .kicker { display: inline-flex; align-items: center; gap: 10px; font: 700 13px/1 var(--font); letter-spacing: .16em; text-transform: uppercase; color: var(--text); margin-bottom: 18px; }
+    .kicker::before { content: ""; width: 3px; height: 15px; border-radius: 2px; background: var(--brand); box-shadow: 0 0 10px rgba(230,240,27,.6); }
+    .kicker.violet::before { background: var(--best); box-shadow: 0 0 10px rgba(180,107,255,.7); }
+    .kicker.blue::before { background: var(--accent); box-shadow: 0 0 10px rgba(61,139,255,.7); }
+    .kicker.green::before { background: var(--gain); box-shadow: 0 0 10px rgba(52,210,123,.7); }
+    .section-head { max-width: 760px; }
+    .section-head p { margin-top: 20px; font-size: 19px; }
+    .split { display: grid; grid-template-columns: 1fr 1fr; gap: 56px; align-items: center; margin-top: 56px; }
+    .split.wide-img { grid-template-columns: 0.85fr 1.15fr; }
+
+    .features { display: grid; gap: 22px; }
+    .feature { display: grid; grid-template-columns: 42px 1fr; gap: 16px; align-items: start; }
+    .feature .ico { width: 42px; height: 42px; display: grid; place-items: center; border-radius: 10px; background: var(--surface-2); border: 1px solid var(--line-strong); color: var(--brand); }
+    .feature h3 { font-size: 20px; margin-bottom: 4px; }
+    .feature p { color: var(--muted); font-size: 16px; }
+    .legend { display: flex; flex-wrap: wrap; gap: 10px 20px; margin-top: 28px; font-size: 14px; color: var(--muted); }
+    .legend span { display: inline-flex; align-items: center; gap: 8px; }
+    .legend i { width: 12px; height: 12px; border-radius: 3px; }
+
+    /* Tour théorique */
+    .compare { display: grid; grid-template-columns: 1fr auto 1fr; gap: 18px; align-items: center; margin-top: 36px; }
+    .compare .card { padding: 22px 24px; }
+    .compare .t { font-size: 46px; font-weight: 700; color: var(--text); line-height: 1.05; margin-top: 10px; }
+    .compare .card.best { border-color: rgba(180,107,255,.55); background: linear-gradient(180deg, #1d1530 0%, #110d1d 100%); box-shadow: var(--card-shadow), 0 0 34px rgba(180,107,255,.2); }
+    .compare .card.best .label { color: var(--best-soft); }
+    .compare .card.best .t { color: var(--best-soft); text-shadow: 0 0 22px rgba(180,107,255,.45); }
+    .compare .arrow { color: var(--muted); }
+    .gainline { margin-top: 14px; font-size: 15px; color: var(--muted); }
+    .gainline b { color: var(--best-soft); font-family: var(--display); font-size: 20px; }
+    .zones { margin-top: 26px; display: grid; gap: 10px; }
+    .zone { display: grid; grid-template-columns: 1fr auto; gap: 4px 16px; padding: 14px 18px; border-radius: 10px; background: var(--surface); border: 1px solid var(--line); }
+    .zone b { color: var(--text); font-weight: 600; }
+    .zone .d { color: var(--best-soft); font-family: var(--display); font-weight: 700; font-size: 18px; }
+    .zone p { grid-column: 1 / -1; font-size: 15px; color: var(--muted); }
+    .zone .bar { grid-column: 1 / -1; height: 3px; border-radius: 2px; background: var(--line); margin-top: 6px; overflow: hidden; }
+    .zone .bar i { display: block; height: 100%; background: var(--best); box-shadow: 0 0 8px var(--best); }
+    .note { margin-top: 26px; padding: 16px 18px; border-radius: 10px; border: 1px dashed var(--line-strong); color: var(--muted); font-size: 15px; }
+
+    /* Stratégie */
+    .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; margin-top: 48px; }
+    .tile { padding: 24px; }
+    .tile .label { color: var(--brand); }
+    .tile h3 { margin: 12px 0 8px; }
+    .tile p { color: var(--muted); font-size: 16px; }
+    .quote { margin-top: 14px; padding: 12px 14px; border-radius: 8px; background: #070b12; box-shadow: inset 0 2px 4px rgba(0,0,0,.6); color: var(--text); font-size: 15px; line-height: 1.5; }
+    .quote::before { content: "« "; color: var(--warn); } .quote::after { content: " »"; color: var(--warn); }
+    .calc-note { margin-top: 28px; display: flex; gap: 14px; align-items: center; padding: 18px 22px; border-radius: var(--r);
+      background: linear-gradient(90deg, rgba(255,179,65,.10), rgba(255,179,65,0)); border: 1px solid rgba(255,179,65,.35); color: var(--text); }
+    .calc-note svg { color: var(--warn); flex: none; }
+
+    /* Radio */
+    .radio { padding: 22px 22px 18px; }
+    .radio-head { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+    .radio-head .live { display: inline-flex; align-items: center; gap: 8px; color: var(--gain); font-size: 13px; font-weight: 600; }
+    .radio-head .live i { width: 8px; height: 8px; border-radius: 50%; background: var(--gain); box-shadow: 0 0 10px var(--gain); animation: pulse 1.4s infinite; }
+    .feed { margin-top: 16px; display: grid; gap: 0; min-height: 368px; align-content: start; }
+    .item { display: grid; grid-template-columns: 40px 1fr; gap: 14px; padding: 14px 0; border-top: 1px solid var(--line); animation: in .5s ease both; }
+    .item:first-child { border-top: 0; }
+    .item .av { width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center; border: 1px solid var(--line-strong); background: var(--surface-2); color: var(--accent-soft); }
+    .item.q .av { color: var(--text); }
+    .item .tag { font: 600 12px/1 var(--font); letter-spacing: .1em; text-transform: uppercase; color: var(--accent-soft); }
+    .item .txt { margin-top: 6px; color: var(--text-2); font-size: 15.5px; line-height: 1.5; }
+    .item:first-child .txt { color: var(--warn); font-size: 18px; font-weight: 500; }
+    .item.q .tag { color: var(--muted); }
+    .item.q .txt, .item.q:first-child .txt { color: var(--text); font-style: normal; font-size: 15.5px; font-weight: 400; }
+    .item:nth-child(n+4) { opacity: .5; }
+    @keyframes in { from { opacity: 0; transform: translateY(-8px); } }
+    .ptt { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 12px; padding-top: 16px; border-top: 1px solid var(--line); color: var(--muted); font-size: 14px; }
+    kbd { font: 600 13px/1 var(--font); color: var(--text); padding: 5px 8px; border-radius: 6px; background: var(--surface-2); border: 1px solid var(--line-strong); border-bottom-width: 2px; }
+
+    /* LMU / simulateurs */
+    .sims { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-top: 48px; }
+    .sim { padding: 28px; }
+    .sim h3 { font-size: 28px; }
+    .sim .sub { color: var(--muted); margin-top: 8px; }
+    .sim ul { list-style: none; padding: 0; margin: 20px 0 0; display: grid; gap: 14px; }
+    .sim li { padding-left: 26px; position: relative; color: var(--text-2); font-size: 16px; }
+    .sim li::before { content: ""; position: absolute; left: 0; top: 9px; width: 12px; height: 3px; border-radius: 2px; background: var(--brand); }
+    .sim li b { color: var(--text); font-weight: 600; }
+
+    /* Confidentialité */
+    .privacy { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; margin-top: 48px; }
+    .privacy .card { padding: 24px; }
+    .privacy .ico { color: var(--gain); }
+    .privacy h3 { font-size: 19px; margin: 14px 0 8px; }
+    .privacy p { color: var(--muted); font-size: 15px; }
+
+    /* Installer */
+    .steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; margin-top: 48px; counter-reset: s; }
+    .step { padding: 26px; position: relative; }
+    .step::before { counter-increment: s; content: counter(s); font: 800 56px/1 var(--display); color: transparent; -webkit-text-stroke: 1.5px var(--line-strong); position: absolute; right: 22px; top: 18px; }
+    .step h3 { margin-bottom: 10px; padding-right: 40px; }
+    .step p { color: var(--muted); font-size: 15.5px; }
+    .step p + p { margin-top: 10px; }
+    .step code { font-size: 13.5px; color: var(--text); background: #070b12; padding: 2px 6px; border-radius: 5px; word-break: break-all; }
+    .download { margin-top: 30px; display: flex; flex-wrap: wrap; align-items: center; gap: 18px 26px; padding: 26px 28px; }
+    .download .t { flex: 1 1 320px; }
+    .download h3 { font-size: 26px; }
+    .download p { color: var(--muted); margin-top: 6px; font-size: 15px; }
+
+    /* FAQ */
+    .faq { margin-top: 40px; display: grid; gap: 12px; max-width: 860px; }
+    .faq details { border: 1px solid var(--line); border-radius: 12px; background: var(--surface); }
+    .faq summary { cursor: pointer; list-style: none; padding: 18px 22px; display: flex; justify-content: space-between; gap: 16px; align-items: center; color: var(--text); font-weight: 600; font-size: 17px; }
+    .faq summary::-webkit-details-marker { display: none; }
+    .faq summary::after { content: "+"; font: 400 26px/1 var(--display); color: var(--muted); transition: transform .2s; }
+    .faq details[open] summary::after { transform: rotate(45deg); }
+    .faq details p { padding: 0 22px 20px; color: var(--muted); font-size: 16px; }
+
+    /* Final */
+    .final { margin: 130px 0 0; padding: 70px 24px; text-align: center; position: relative; overflow: hidden; border-radius: 22px; border: 1px solid var(--line-strong);
+      background: radial-gradient(500px 260px at 20% 0%, rgba(61,139,255,.22), transparent 70%), radial-gradient(500px 260px at 85% 100%, rgba(230,240,27,.14), transparent 70%), var(--bg-2); }
+    .final img { width: min(380px, 80%); margin: 0 auto 28px; }
+    .final p { max-width: 560px; margin: 0 auto; font-size: 18px; }
+    .final .cta-row { justify-content: center; }
+
+    footer { margin-top: 90px; border-top: 1px solid var(--line); padding: 34px 0 48px; color: var(--muted); font-size: 14px; }
+    footer .wrap { display: flex; flex-wrap: wrap; gap: 14px 30px; justify-content: space-between; }
+    footer .links { display: flex; flex-wrap: wrap; gap: 22px; }
+    footer .legal { flex-basis: 100%; font-size: 13px; color: #6b788c; }
+
+    /* Apparition au défilement */
+    .reveal { opacity: 0; transform: translateY(18px); transition: opacity .7s ease, transform .7s ease; }
+    .reveal.on { opacity: 1; transform: none; }
+
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      .reveal { opacity: 1; transform: none; transition: none; }
+      .eyebrow .dot, .radio-head .live i, .item { animation: none; }
+    }
+
+    @media (max-width: 1020px) {
+      .hero-grid, .split, .split.wide-img { grid-template-columns: 1fr; }
+      .hero { padding-top: 56px; }
+      .stats { grid-template-columns: repeat(2, 1fr); }
+      .grid-3, .steps { grid-template-columns: 1fr 1fr; }
+      .privacy { grid-template-columns: 1fr 1fr; }
+      .split .shot { order: -1; }
+    }
+    @media (max-width: 760px) {
+      body { font-size: 16px; }
+      .nav { display: none; position: absolute; top: 71px; left: 0; right: 0; flex-direction: column; gap: 0; background: rgba(6,9,15,.97); border-bottom: 1px solid var(--line); padding: 8px 16px 16px; }
+      .nav.open { display: flex; }
+      .nav a { padding: 12px 4px; font-size: 17px; border-bottom: 1px solid var(--line); }
+      .menu-btn { display: grid; }
+      .header .btn { display: none; }
+      .grid-3, .steps, .sims, .privacy { grid-template-columns: 1fr; }
+      .delta-card { padding: 18px 18px 20px; }
+      .delta-card .row { flex-wrap: wrap; }
+      .delta-card .delta-value { order: -1; flex-basis: 100%; text-align: center; margin-bottom: 6px; }
+      .delta-card .small { font-size: 22px; }
+      .stat .v { font-size: 36px; }
+      .compare { grid-template-columns: 1fr; }
+      .compare .arrow { transform: rotate(90deg); justify-self: center; }
+      section.block { padding-top: 88px; }
+      .feed { min-height: 420px; }
+      .final { margin-top: 96px; padding: 50px 18px; }
+    }
+    @media (max-width: 420px) {
+      .stats { grid-template-columns: 1fr; }
+      .cta-row .btn { width: 100%; justify-content: center; }
+    }
+  </style>
+</head>
+<body>
+  <div class="topline" aria-hidden="true"></div>
+
+  <header class="header">
+    <div class="wrap">
+      <a class="logo" href="#top" aria-label="SEKTOR, accueil"><img src="img/sektor-logo.png" alt="SEKTOR" width="94" height="34"></a>
+      <nav class="nav" id="nav">
+        <a href="#coaching">Coaching</a>
+        <a href="#theorique">Tour théorique</a>
+        <a href="#strategie">Stratégie</a>
+        <a href="#radio">Radio</a>
+        <a href="#installer">Installer</a>
+        <a href="#faq">FAQ</a>
+      </nav>
+      <a class="btn btn-neon btn-sm" href="https://github.com/AndyD9/Sektor/releases/latest">Télécharger</a>
+      <button class="menu-btn" id="menu-btn" aria-label="Ouvrir le menu" aria-expanded="false" aria-controls="nav">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 5h14M3 10h14M3 15h14"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <main id="top">
+    <!-- ================= HERO ================= -->
+    <section class="hero">
+      <div class="wrap hero-grid">
+        <div>
+          <span class="eyebrow"><span class="dot"></span>iRacing · Le Mans Ultimate</span>
+          <h1>Chaque dixième perdu a <span class="hl">une adresse.</span></h1>
+          <p class="lead">SEKTOR compare chaque passage à ton meilleur tour, virage par virage, et te dit à la voix où tu as perdu du temps et comment le reprendre. En course, il tient la stratégie : carburant, arrêt, bagarre, pneus, pluie.</p>
+          <div class="cta-row">
+            <a class="btn btn-neon" href="https://github.com/AndyD9/Sektor/releases/latest">
+              <svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 3v10m0 0 4-4m-4 4-4-4M4 16h12"/></svg>
+              Télécharger pour Windows
+            </a>
+            <a class="btn btn-ghost" href="#coaching">Voir comment ça marche</a>
+          </div>
+          <div class="reassure">
+            <span><svg width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m4 10 4 4 8-8"/></svg>Calcul sur ton PC</span>
+            <span><svg width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m4 10 4 4 8-8"/></svg>Sans abonnement</span>
+            <span><svg width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m4 10 4 4 8-8"/></svg>Windows 10 et 11</span>
+          </div>
+        </div>
+
+        <div class="delta-stack" aria-label="Exemple de coaching en piste">
+          <div class="card delta-card">
+            <div class="row">
+              <div><div class="label">Référence</div><div class="small num">2:15.377</div></div>
+              <div class="delta-value num" id="delta">+0.21</div>
+              <div style="text-align:right"><div class="label">Tour théorique</div><div class="small num" style="color:var(--best-soft)">2:13.054</div></div>
+            </div>
+            <div class="gauge"><i id="gauge" style="width:21%"></i></div>
+            <div class="leds" id="leds"><b class="g"></b><b class="g"></b><b class="y"></b><b class="g"></b><b class="v"></b><b class="y"></b><b class="c"></b><b></b><b></b><b></b><b></b><b></b></div>
+          </div>
+          <div class="card msg-card" id="msg">
+            <div class="row"><h3 id="msg-title">Bus Stop</h3><span class="d num" id="msg-delta">+0.21</span></div>
+            <p id="msg-text">Tu freines 9 mètres avant ta référence. Tu passes 3 km/h moins vite au point le plus lent.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="wrap showcase">
+        <div class="shot reveal" style="margin-top:56px">
+          <img src="img/live.jpg" width="2000" height="1528" alt="Écran Live de SEKTOR en essais à Spa : delta en direct, tour théorique, prochain objectif, carte du circuit, virages et télémétrie">
+        </div>
+        <p class="shot-caption">L'écran Live, en essais à Spa en Porsche 911 GT3 R : capture réelle, rejouée depuis un fichier de télémétrie iRacing.</p>
+
+        <div class="stats reveal">
+          <div class="stat"><div class="v num">2,1<small>ms</small></div><p>d'écart au plus avec les chronos d'iRacing, mesuré sur 8 tours.</p></div>
+          <div class="stat"><div class="v num">1,5<small>µs</small></div><p>de traitement en moyenne par relevé de télémétrie.</p></div>
+          <div class="stat"><div class="v num">277</div><p>circuits aux virages nommés : 271 tracés iRacing et 6 de Le Mans Ultimate.</p></div>
+          <div class="stat"><div class="v num">6<small>/s</small></div><p>lectures de tout le plateau en course : carburant, écarts, piste, pneus.</p></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= COACHING ================= -->
+    <section class="block" id="coaching">
+      <div class="wrap">
+        <div class="section-head reveal">
+          <div class="kicker">Coaching</div>
+          <h2>Ton meilleur tour devient ton professeur.</h2>
+          <p>Boucle un tour propre : il devient ta référence et le circuit est découpé en virages. Dès le tour suivant, chaque passage est mesuré face à elle, et SEKTOR te dit ce qui a changé, en mètres et en km/h.</p>
+        </div>
+
+        <div class="split">
+          <div class="features reveal">
+            <div class="feature">
+              <div class="ico"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 15h14M10 15V5m-4 4 4-4 4 4"/></svg></div>
+              <div><h3>Delta en direct</h3><p>L'écart à ta référence, rafraîchi en continu, avec une jauge de ±0,5 s et la barre du tour en couleurs : où tu gagnes, où tu perds.</p></div>
+            </div>
+            <div class="feature">
+              <div class="ico"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 16c0-6 3-9 9-9h3M13 4l3 3-3 3"/></svg></div>
+              <div><h3>Dernier virage, prochain objectif</h3><p>Freinage, vitesse au point le plus lent, remise des gaz, vitesse d'entrée : chaque virage est comparé à ta référence, et le suivant te dit où aller chercher le temps.</p></div>
+            </div>
+            <div class="feature">
+              <div class="ico"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 14c2-6 4-9 6-4s4 4 8-6"/></svg></div>
+              <div><h3>Télémétrie face à la référence</h3><p>Vitesse, frein et gaz du tour en cours superposés à ceux de ta référence, avec le rapport engagé et la position de la voiture sur la carte.</p></div>
+            </div>
+            <div class="feature">
+              <div class="ico"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><rect x="3" y="5" width="14" height="10" rx="2"/><path d="M7 9h6"/></svg></div>
+              <div><h3>Overlay par-dessus le jeu</h3><p>Le delta et le message du coach s'affichent en jeu, dans un panneau que tu déplaces et redimensionnes (<kbd>Ctrl</kbd> <kbd>Alt</kbd> <kbd>O</kbd>).</p></div>
+            </div>
+            <div class="legend">
+              <span><i style="background:var(--best)"></i>Meilleur de la session</span>
+              <span><i style="background:var(--gain)"></i>Temps gagné</span>
+              <span><i style="background:var(--brand)"></i>Temps perdu</span>
+            </div>
+          </div>
+          <div class="reveal">
+            <div class="card msg-card" style="margin-bottom:14px">
+              <div class="row"><h3>La Source</h3><span class="d num">+0.21</span></div>
+              <p>Tu freines 12 mètres avant ta référence. Tu passes 5 km/h moins vite au point le plus lent.</p>
+            </div>
+            <div class="card msg-card gain" style="margin-bottom:14px">
+              <div class="row"><h3>Ligne droite après Les Combes</h3><span class="d num">−0.19</span></div>
+              <p>Tu l'abordes 4 km/h plus vite que ta référence.</p>
+            </div>
+            <div class="card msg-card gain">
+              <div class="row"><h3>Campus</h3><span class="d num">−0.05</span></div>
+              <p>Même point de freinage. Tu remets les gaz 11 mètres plus tôt.</p>
+            </div>
+            <p class="shot-caption" style="text-align:left">Les messages citent le virage par son nom et ne parlent jamais pendant un freinage.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= TOUR THÉORIQUE ================= -->
+    <section class="block" id="theorique">
+      <div class="wrap">
+        <div class="section-head reveal">
+          <div class="kicker violet">Tour théorique</div>
+          <h2>Ce que ta voiture sait faire, sur ta trajectoire.</h2>
+          <p>Après chaque tour valide, SEKTOR mesure la voiture : adhérence en virage et au freinage selon la vitesse, accélération à pleine charge. Puis il simule ta trajectoire à cette limite. Le résultat : un chrono, et virage par virage, la marge qu'il te reste.</p>
+        </div>
+
+        <div class="split wide-img">
+          <div class="reveal">
+            <div class="compare">
+              <div class="card"><div class="label">Ta référence</div><div class="t num">2:15.377</div></div>
+              <svg class="arrow" width="28" height="28" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 10h12m-4-4 4 4-4 4"/></svg>
+              <div class="card best"><div class="label">Tour théorique</div><div class="t num">2:13.054</div></div>
+            </div>
+            <p class="gainline"><b>−2,323 s</b> à aller chercher, Porsche 911 GT3 R à Spa, voiture mesurée sur 3 tours.</p>
+            <div class="zones">
+              <div class="zone"><b>Bruxelles</b><span class="d">−0.36</span><p>Tu peux passer 7 km/h plus vite au point le plus lent.</p><span class="bar"><i style="width:100%"></i></span></div>
+              <div class="zone"><b>Bus Stop</b><span class="d">−0.35</span><p>Tu peux freiner jusqu'à 9 mètres plus tard.</p><span class="bar"><i style="width:97%"></i></span></div>
+              <div class="zone"><b>La Source</b><span class="d">−0.29</span><p>Tu peux freiner jusqu'à 5 mètres plus tard.</p><span class="bar"><i style="width:80%"></i></span></div>
+            </div>
+            <p class="note">Le tour théorique garde ta trajectoire. Une meilleure ligne peut faire mieux : saisis un <b style="color:var(--text)">temps cible</b> (un record, le tour d'un pilote rapide) pour séparer ce qui est à ta portée de ce qui reste à chercher dans la ligne ou le réglage.</p>
+          </div>
+          <div class="shot reveal">
+            <img src="img/debrief.jpg" width="2000" height="1167" loading="lazy" alt="Écran Débrief : meilleur tour, tour théorique, liste des tours et zones où aller chercher le temps">
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= STRATÉGIE ================= -->
+    <section class="block" id="strategie">
+      <div class="wrap">
+        <div class="section-head reveal">
+          <div class="kicker">Stratégie de course</div>
+          <h2>Quand rentrer, combien remettre, où tu ressors.</h2>
+          <p>Pendant la course, SEKTOR lit six fois par seconde le carburant, les positions de tout le plateau, l'état de la piste et les pneus. Il en tire les décisions qu'un ingénieur prendrait au muret.</p>
+        </div>
+
+        <div class="shot reveal" style="margin-top:48px">
+          <img src="img/course.jpg" width="2000" height="1090" loading="lazy" alt="Écran Live en course : fenêtre d'arrêt, carburant, position, pneus et module Bagarre avec les écarts devant et derrière">
+        </div>
+        <p class="shot-caption">En course : la fenêtre d'arrêt, le carburant, la position et la bagarre avec les voitures devant et derrière.</p>
+
+        <div class="grid-3">
+          <div class="card tile reveal"><div class="label">Carburant</div><h3>La fenêtre d'arrêt</h3><p>Consommation mesurée sur tes tours propres, tours restants, premier et dernier tour possible pour s'arrêter, litres à remettre. Une marge d'un demi-tour est gardée.</p></div>
+          <div class="card tile reveal"><div class="label">Économie</div><h3>Économiser ou s'arrêter</h3><p>Quand il manque peu de carburant, l'économie est chiffrée et comparée à l'arrêt.</p><div class="quote">À 2,65 litres au tour au lieu de 2,80, tu évites l'arrêt. Ça te coûte environ 0,6 seconde au tour, et tu gagnes 25 secondes sur l'arrêt.</div></div>
+          <div class="card tile reveal"><div class="label">Stands</div><h3>Ressortir en piste libre</h3><p>Ta position à la sortie des stands si tu t'arrêtais maintenant, et le meilleur tour pour rentrer sans ressortir dans les échappements d'une autre voiture.</p></div>
+          <div class="card tile reveal"><div class="label">Undercut</div><h3>Le bon moment pour attaquer</h3><p>Ton rythme en pneus neufs face à celui de la voiture de devant qui doit encore s'arrêter.</p><div class="quote">Undercut possible sur la 14, à 1,5 seconde devant. Rentre à la fin de ce tour.</div></div>
+          <div class="card tile reveal"><div class="label">Bagarre</div><h3>Devant, derrière</h3><p>Chaque voiture est chronométrée en cent points du tour, comme par les boucles d'un vrai circuit : l'écart réel, ce qu'il devient à chaque tour, et dans combien de tours elle est à portée.</p></div>
+          <div class="card tile reveal"><div class="label">Pneus · Piste</div><h3>Usure et pluie</h3><p>Perte au tour face aux meilleurs tours du même train, humidité de la piste et tendance, nombre de tours avant les pneus pluie ou le retour en slicks.</p></div>
+        </div>
+        <div class="calc-note reveal">
+          <svg width="22" height="22" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2 3 6v4c0 4 3 7 7 8 4-1 7-4 7-8V6z"/><path d="m7 10 2 2 4-4"/></svg>
+          <span>Ces décisions sont calculées, sans IA : elles arrivent tout de suite et ne peuvent pas inventer un chiffre.</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= RADIO ================= -->
+    <section class="block" id="radio">
+      <div class="wrap">
+        <div class="split">
+          <div class="reveal">
+            <div class="kicker blue">Radio ingénieur</div>
+            <h2>Un seul ingénieur. Il parle quand tu peux l'écouter.</h2>
+            <p style="margin-top:20px;font-size:19px">Stratégie, bagarre, pilotage, réponses à tes questions : tout passe par la même radio, d'une seule voix, le chiffre d'abord.</p>
+            <div class="features" style="margin-top:34px">
+              <div class="feature">
+                <div class="ico" style="color:var(--accent-soft)"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 10h14M13 6l4 4-4 4"/></svg></div>
+                <div><h3>En ligne droite seulement</h3><p>Jamais dans un virage ni juste avant un freinage. Seule une décision urgente, rentrer ce tour ou passer en pneus pluie, passe partout.</p></div>
+              </div>
+              <div class="feature">
+                <div class="ico" style="color:var(--accent-soft)"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 3v14M5 8v4M15 8v4"/></svg></div>
+                <div><h3>Il s'efface quand tu te bats</h3><p>À moins de deux secondes d'une autre voiture, plus de conseil de pilotage. À moins d'une seconde, plus que les décisions.</p></div>
+              </div>
+              <div class="feature">
+                <div class="ico" style="color:var(--accent-soft)"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="2" width="6" height="10" rx="3"/><path d="M4 9a6 6 0 0 0 12 0M10 15v3"/></svg></div>
+                <div><h3>Pose-lui ta question</h3><p>Maintiens <kbd>Ctrl</kbd> <kbd>Alt</kbd> <kbd>I</kbd> et parle : « combien de tours de carburant ? », « je ressors où si je rentre maintenant ? ». Les questions courantes ont une réponse immédiate, même sans IA.</p></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card radio reveal" aria-live="polite">
+            <div class="radio-head">
+              <div class="kicker" style="margin:0">Radio ingénieur</div>
+              <span class="live"><i></i>En course</span>
+            </div>
+            <div class="feed" id="feed"></div>
+            <div class="ptt"><span>Maintenir pour parler</span><span><kbd>Ctrl</kbd> <kbd>Alt</kbd> <kbd>I</kbd></span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= SIMULATEURS ================= -->
+    <section class="block" id="simulateurs">
+      <div class="wrap">
+        <div class="section-head reveal">
+          <div class="kicker green">Simulateurs</div>
+          <h2>iRacing et Le Mans Ultimate, en même temps.</h2>
+          <p>SEKTOR écoute les deux : le premier lancé a la main. Tes références sont enregistrées par simulateur, circuit et voiture, et rechargées dès que tu reprends la piste.</p>
+        </div>
+        <div class="sims">
+          <div class="card sim reveal">
+            <h3>iRacing</h3>
+            <p class="sub">Rien à régler : lance le jeu, SEKTOR se connecte.</p>
+            <ul>
+              <li><b>Virages nommés</b> sur 271 tracés, d'après les repères de Crew Chief.</li>
+              <li><b>Stratégie complète</b> : carburant, arrêts du plateau, undercut, pluie, dégradation.</li>
+              <li><b>Chronos fidèles</b> : 2,1 ms d'écart au plus avec ceux du simulateur.</li>
+            </ul>
+          </div>
+          <div class="card sim reveal">
+            <h3>Le Mans Ultimate</h3>
+            <p class="sub">Active « Enable Plugins » dans les réglages du jeu. Aucun plugin à installer.</p>
+            <ul>
+              <li><b>Énergie virtuelle</b> en Hypercar et en GT3 : le relais est calé sur la première ressource épuisée, carburant ou énergie.</li>
+              <li><b>Usure des pneus en direct</b>, pneu par pneu, avec une alerte trois tours avant la limite.</li>
+              <li><b>Limites de piste</b> : chaque point pris est annoncé, avec ce qu'il reste avant la pénalité.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= LOCAL ================= -->
+    <section class="block" id="local">
+      <div class="wrap">
+        <div class="section-head reveal">
+          <div class="kicker green">Sur ton PC</div>
+          <h2>Ta télémétrie reste chez toi.</h2>
+        </div>
+        <div class="privacy">
+          <div class="card reveal"><svg class="ico" width="26" height="26" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="16" height="10" rx="1.5"/><path d="M7 17h6M10 14v3"/></svg><h3>Tout le calcul en local</h3><p>Coaching, tour théorique et stratégie tournent sur ta machine. Pas de compte en ligne, pas d'abonnement.</p></div>
+          <div class="card reveal"><svg class="ico" width="26" height="26" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2 3 6v4c0 4 3 7 7 8 4-1 7-4 7-8V6z"/></svg><h3>L'IA ne voit que des chiffres</h3><p>Le débrief et le point du tour envoient le circuit, la voiture, tes chronos et tes écarts. Jamais ton nom ni celui des autres pilotes.</p></div>
+          <div class="card reveal"><svg class="ico" width="26" height="26" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="2" width="6" height="10" rx="3"/><path d="M4 9a6 6 0 0 0 12 0"/></svg><h3>Micro sous ton contrôle</h3><p>Ta voix n'est enregistrée que pendant que tu maintiens la touche, 30 secondes au plus.</p></div>
+          <div class="card reveal"><svg class="ico" width="26" height="26" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="7" cy="10" r="4"/><path d="M11 10h7M15 10v3"/></svg><h3>Une licence discrète</h3><p>Le serveur de licences ne reçoit que ta clé, une empreinte de l'ordinateur et le numéro de version. Ensuite, SEKTOR marche hors ligne.</p></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= INSTALLER ================= -->
+    <section class="block" id="installer">
+      <div class="wrap">
+        <div class="section-head reveal">
+          <div class="kicker">Installer</div>
+          <h2>En piste en trois étapes.</h2>
+        </div>
+        <div class="steps">
+          <div class="card step reveal"><h3>Télécharge</h3><p>Prends l'installateur <code>SEKTOR_…_x64-setup.exe</code> dans la dernière version publiée.</p><p>Windows 10 ou 11, 64 bits. Rien d'autre à installer.</p></div>
+          <div class="card step reveal"><h3>Installe</h3><p>L'installateur n'a pas encore de certificat Windows : au premier lancement, SmartScreen prévient. Clique sur « Informations complémentaires », puis « Exécuter quand même ».</p></div>
+          <div class="card step reveal"><h3>Active et roule</h3><p>Saisis ta clé de licence au premier lancement, puis lance iRacing ou Le Mans Ultimate. Boucle un tour propre : le coaching commence au suivant.</p></div>
+        </div>
+        <div class="card download reveal">
+          <div class="t">
+            <h3>Mises à jour automatiques</h3>
+            <p>SEKTOR signale lui-même les nouvelles versions et les installe sur un clic. Une mise à jour n'est installée que si sa signature est vérifiée.</p>
+          </div>
+          <a class="btn btn-neon" href="https://github.com/AndyD9/Sektor/releases/latest">
+            <svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 3v10m0 0 4-4m-4 4-4-4M4 16h12"/></svg>
+            Télécharger la dernière version
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= FAQ ================= -->
+    <section class="block" id="faq">
+      <div class="wrap">
+        <div class="section-head reveal">
+          <div class="kicker">Questions</div>
+          <h2>Questions fréquentes</h2>
+        </div>
+        <div class="faq">
+          <details><summary>Faut-il une connexion pendant que je roule ?</summary><p>Non. La licence est confirmée en ligne au lancement, puis une fois par jour ; elle reste valable sept jours hors ligne. Le coaching, le tour théorique et la stratégie tournent sur ton PC. Seules les fonctions d'IA (débrief rédigé, point du tour, questions dictées) et la voix en ligne ont besoin d'Internet ; sans elles, la voix de Windows prend le relais.</p></details>
+          <details><summary>Comment obtenir une clé de licence ?</summary><p>SEKTOR est en phase de test : les clés sont délivrées aux testeurs. Une clé vaut pour un ordinateur ; si tu changes de machine, elle peut être libérée.</p></details>
+          <details><summary>Est-ce que ça marche avec toutes les voitures et tous les circuits ?</summary><p>Oui. La référence est enregistrée par simulateur, circuit et voiture. Les virages portent leur nom sur 271 tracés iRacing et 6 circuits Le Mans Ultimate ; ailleurs, ils sont numérotés.</p></details>
+          <details><summary>Je joue en plein écran : je verrai l'overlay ?</summary><p>Pour voir l'overlay par-dessus le jeu, joue en fenêtre sans bordure plutôt qu'en plein écran exclusif. Le dashboard, lui, s'affiche dans sa propre fenêtre, par exemple sur un second écran.</p></details>
+          <details><summary>Je peux parler à l'ingénieur avec un bouton du volant ?</summary><p>Les touches se changent dans les réglages (par exemple <kbd>F13</kbd> ou <kbd>Maj</kbd> <kbd>F9</kbd>). Associe ton bouton à cette touche avec le logiciel du volant ou un outil comme JoyToKey.</p></details>
+          <details><summary>Le tour théorique, c'est le record du circuit ?</summary><p>Non : c'est ta trajectoire, roulée à la limite de ta voiture telle qu'elle a été mesurée sur tes propres tours. Il s'affine à mesure que les tours valides s'accumulent. Pour viser plus loin, saisis un temps cible.</p></details>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= FINAL ================= -->
+    <div class="wrap">
+      <div class="final reveal">
+        <img src="img/sektor-logo.png" alt="SEKTOR" width="900" height="326" loading="lazy">
+        <p>Ton meilleur tour sait déjà où tu perds du temps. SEKTOR te le dit, au bon moment.</p>
+        <div class="cta-row" style="margin-top:30px">
+          <a class="btn btn-neon" href="https://github.com/AndyD9/Sektor/releases/latest">Télécharger pour Windows</a>
+          <a class="btn btn-ghost" href="#installer">Comment installer</a>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <div class="wrap">
+      <span>© 2026 AndyD9 · SEKTOR, logiciel propriétaire</span>
+      <div class="links">
+        <a href="https://github.com/AndyD9/Sektor/releases">Versions</a>
+        <a href="https://github.com/AndyD9/Sektor/blob/main/LICENSE">Licence</a>
+        <a href="https://github.com/AndyD9/Sektor">GitHub</a>
+      </div>
+      <p class="legal">iRacing et Le Mans Ultimate sont des marques de leurs propriétaires respectifs. SEKTOR est un logiciel indépendant, ni affilié ni approuvé par eux.</p>
+    </div>
+  </footer>
+
+  <script>
+    // Menu mobile
+    const btn = document.getElementById("menu-btn");
+    const nav = document.getElementById("nav");
+    btn.addEventListener("click", () => {
+      const open = nav.classList.toggle("open");
+      btn.setAttribute("aria-expanded", String(open));
+    });
+    nav.addEventListener("click", (e) => { if (e.target.tagName === "A") { nav.classList.remove("open"); btn.setAttribute("aria-expanded", "false"); } });
+
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    // Apparition au défilement
+    const io = new IntersectionObserver((entries) => {
+      for (const e of entries) if (e.isIntersecting) { e.target.classList.add("on"); io.unobserve(e.target); }
+    }, { rootMargin: "0px 0px -8% 0px" });
+    document.querySelectorAll(".reveal").forEach((el) => io.observe(el));
+
+    // Carte delta du hero : quelques virages de Spa, en boucle
+    const passes = [
+      { t: "Bus Stop", d: 0.21, m: "Tu freines 9 mètres avant ta référence. Tu passes 3 km/h moins vite au point le plus lent." },
+      { t: "La Source", d: -0.12, m: "Tu freines 5 mètres plus tard que ta référence, même vitesse au point le plus lent." },
+      { t: "Bruxelles", d: 0.34, m: "Tu passes 7 km/h moins vite au point le plus lent. Tu remets les gaz 14 mètres plus tard." },
+      { t: "Ligne droite après Les Combes", d: -0.19, m: "Tu l'abordes 4 km/h plus vite que ta référence." },
+    ];
+    const fmt = (d) => (d > 0 ? "+" : "−") + Math.abs(d).toFixed(2);
+    let pi = 0;
+    function showPass() {
+      const p = passes[pi % passes.length]; pi++;
+      const gain = p.d < 0;
+      document.getElementById("delta").textContent = fmt(p.d);
+      document.getElementById("delta").classList.toggle("gain", gain);
+      const g = document.getElementById("gauge");
+      const w = Math.min(Math.abs(p.d) / 0.5, 1) * 50;
+      g.style.width = w + "%";
+      g.style.left = gain ? (50 - w) + "%" : "50%";
+      g.style.background = gain ? "var(--gain)" : "var(--brand)";
+      const msg = document.getElementById("msg");
+      msg.classList.toggle("gain", gain);
+      document.getElementById("msg-title").textContent = p.t;
+      document.getElementById("msg-delta").textContent = fmt(p.d);
+      document.getElementById("msg-text").textContent = p.m;
+    }
+    showPass();
+    if (!reduce) setInterval(showPass, 4200);
+
+    // Radio : les messages de l'ingénieur arrivent un à un
+    const radio = [
+      { tag: "T8 · Course", txt: "La 12 est à 8 dixièmes devant. Elle est à portée, attaque." },
+      { tag: "T9 · Stratégie", txt: "Arrêt carburant entre les tours 11 et 14." },
+      { tag: "Toi", txt: "Les écarts ?", q: true },
+      { tag: "T9 · Réponse", txt: "La 12 est à 1,2 seconde devant, tu lui reprends 3 dixièmes au tour." },
+      { tag: "T10 · Course", txt: "La 13 est à 7 dixièmes derrière. Défends." },
+      { tag: "T11 · Stratégie", txt: "À 2,65 litres au tour au lieu de 2,80, tu évites l'arrêt. Ça te coûte environ 0,6 seconde au tour, et tu gagnes 25 secondes sur l'arrêt." },
+      { tag: "Toi", txt: "Je vais le rattraper ?", q: true },
+      { tag: "T12 · Réponse", txt: "Oui : tu reprends 3 dixièmes au tour sur la 12, tu l'as dans 3 tours. Il en reste 14." },
+      { tag: "T13 · Stratégie", txt: "La piste se mouille, pneus pluie d'ici deux tours." },
+      { tag: "T14 · Course", txt: "Meilleur tour en course. Encore 10 tours." },
+    ];
+    const feed = document.getElementById("feed");
+    const headset = '<svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 13v-3a6 6 0 0 1 12 0v3"/><rect x="3" y="12" width="3" height="5" rx="1"/><rect x="14" y="12" width="3" height="5" rx="1"/></svg>';
+    const mic = '<svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="2" width="6" height="10" rx="3"/><path d="M4 9a6 6 0 0 0 12 0M10 15v3"/></svg>';
+    function addRadio(r) {
+      const el = document.createElement("div");
+      el.className = "item" + (r.q ? " q" : "");
+      el.innerHTML = '<div class="av">' + (r.q ? mic : headset) + '</div><div><div class="tag"></div><div class="txt"></div></div>';
+      el.querySelector(".tag").textContent = r.tag;
+      el.querySelector(".txt").textContent = r.txt;
+      feed.prepend(el);
+      while (feed.children.length > 4) feed.lastElementChild.remove();
+    }
+    let ri = 0;
+    if (reduce) { radio.slice(0, 4).forEach(addRadio); }
+    else {
+      for (; ri < 3; ri++) addRadio(radio[ri]);
+      setInterval(() => { addRadio(radio[ri % radio.length]); ri++; }, 3600);
+    }
+  </script>
+</body>
+</html>
