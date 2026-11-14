@@ -4,13 +4,13 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>SEKTOR — coach de pilotage pour iRacing et Le Mans Ultimate</title>
-  <meta name="description" content="SEKTOR compare chaque passage à ton meilleur tour, virage par virage, calcule ton tour théorique et tient la stratégie de course. Coach de pilotage local pour iRacing et Le Mans Ultimate, sous Windows.">
+  <meta name="description" content="SEKTOR compare chaque passage à ton meilleur tour, virage par virage. Le coaching est gratuit ; avec Pro, SEKTOR calcule ton tour théorique et tient la stratégie de course. Pour iRacing et Le Mans Ultimate, sous Windows.">
   <meta name="theme-color" content="#06090f">
   <link rel="icon" type="image/png" href="img/icon-256.png">
   <link rel="apple-touch-icon" href="img/icon-256.png">
   <meta property="og:type" content="website">
   <meta property="og:title" content="SEKTOR — chaque dixième perdu a une adresse">
-  <meta property="og:description" content="Coach de pilotage local pour iRacing et Le Mans Ultimate : coaching virage par virage, tour théorique, stratégie de course et ingénieur à la radio.">
+  <meta property="og:description" content="Coach de pilotage pour iRacing et Le Mans Ultimate : coaching virage par virage gratuit, et avec Pro le tour théorique, la stratégie de course et l'ingénieur à la radio.">
   <meta property="og:image" content="https://andyd9.github.io/Sektor/img/og.jpg">
   <meta property="og:locale" content="fr_FR">
   <meta name="twitter:card" content="summary_large_image">
@@ -227,6 +227,14 @@
     .pitbox-row b.num { font-size: 22px; color: var(--brand); }
     .pitbox-radio { margin-top: 14px; color: var(--accent-soft); font-size: 14.5px; line-height: 1.5; }
 
+    /* Pastilles d'offre : « Pro » sur ce qui est réservé à Pro, « Gratuit » sur ce qui reste dans l'offre gratuite */
+    .plan-tag { display: inline-flex; align-items: center; padding: 4px 8px 3px; border-radius: 6px; font: 700 11px/1 var(--font); letter-spacing: .12em; text-transform: uppercase; vertical-align: 2px;
+      color: var(--brand); background: rgba(230,240,27,.08); border: 1px solid rgba(230,240,27,.38); white-space: nowrap; }
+    .plan-tag.free { color: var(--gain); background: rgba(52,210,123,.08); border-color: rgba(52,210,123,.32); }
+    .plan-tag.trial { color: var(--accent-soft); background: rgba(61,139,255,.1); border-color: rgba(110,168,255,.45); }
+    p.free-note { margin-top: 16px; font-size: 15px; line-height: 1.55; color: var(--muted); }
+    p.free-note .plan-tag { margin-right: 8px; }
+
     /* Radio */
     .radio { padding: 22px 22px 18px; }
     .radio-head { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
@@ -263,6 +271,27 @@
     .privacy .ico { color: var(--gain); }
     .privacy h3 { font-size: 19px; margin: 14px 0 8px; }
     .privacy p { color: var(--muted); font-size: 15px; }
+
+    /* Offres */
+    .plans { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-top: 48px; max-width: 980px; }
+    .plan { padding: 28px; display: flex; flex-direction: column; min-width: 0; }
+    .plan-top { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 12px; }
+    .plan h3 { font-size: 28px; margin-top: 12px; }
+    .price { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 8px; margin-top: 18px; }
+    .price .num { font-size: 50px; font-weight: 700; line-height: 1; color: var(--text); }
+    .price small { color: var(--muted); font-size: 16px; }
+    .plan-sub { margin-top: 8px; color: var(--muted); font-size: 15px; }
+    .plan-list { list-style: none; padding: 0; margin: 22px 0 26px; display: grid; gap: 10px; }
+    .plan-list li { position: relative; padding-left: 28px; color: var(--text-2); font-size: 15.5px; line-height: 1.5; }
+    .plan-list li::before { content: ""; position: absolute; left: 2px; top: 6px; width: 12px; height: 7px; border-left: 2px solid var(--gain); border-bottom: 2px solid var(--gain); transform: rotate(-45deg); }
+    .plan .btn { margin-top: auto; justify-content: center; width: 100%; }
+    .plan-foot { margin-top: 14px; color: var(--muted); font-size: 14px; text-align: center; }
+    .plan-pro { border-color: rgba(61,139,255,.55); box-shadow: var(--card-shadow), 0 0 0 1px rgba(61,139,255,.15), 0 0 40px rgba(61,139,255,.18);
+      background: radial-gradient(420px 220px at 100% 0%, rgba(61,139,255,.16), transparent 70%), var(--card-bg); }
+    .plan-pro .label { color: var(--brand); }
+    .plan-pro .plan-list li::before { border-color: var(--accent-soft); }
+    .plan-pro .plan-list li:first-child { color: var(--text); font-weight: 500; }
+    .plans + .note { max-width: 980px; }
 
     /* Installer */
     .steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; margin-top: 48px; counter-reset: s; }
@@ -316,15 +345,24 @@
       .privacy { grid-template-columns: 1fr 1fr; }
       .split .shot { order: -1; }
       .autopit { grid-template-columns: 1fr; gap: 28px; }
+      .nav { gap: 18px; }
+      .nav a { font-size: 14px; }
     }
-    @media (max-width: 760px) {
-      body { font-size: 16px; }
+    /* Sept liens ne tiennent plus à côté du logo et du bouton : le menu passe derrière le bouton dès 900 px */
+    @media (max-width: 900px) {
       .nav { display: none; position: absolute; top: 71px; left: 0; right: 0; flex-direction: column; gap: 0; background: rgba(6,9,15,.97); border-bottom: 1px solid var(--line); padding: 8px 16px 16px; }
       .nav.open { display: flex; }
       .nav a { padding: 12px 4px; font-size: 17px; border-bottom: 1px solid var(--line); }
-      .menu-btn { display: grid; }
+      .menu-btn { display: grid; margin-left: 0; }
+      .header .btn { margin-left: auto; }
+    }
+    @media (max-width: 760px) {
+      body { font-size: 16px; }
+      .menu-btn { margin-left: auto; }
       .header .btn { display: none; }
-      .grid-3, .steps, .sims, .privacy { grid-template-columns: 1fr; }
+      .grid-3, .steps, .sims, .privacy, .plans { grid-template-columns: 1fr; }
+      .plan { padding: 24px 20px; }
+      .price .num { font-size: 44px; }
       .autopit { padding: 22px 18px; }
       .delta-card { padding: 18px 18px 20px; }
       .delta-card .row { flex-wrap: wrap; }
@@ -354,6 +392,7 @@
         <a href="#theorique">Tour théorique</a>
         <a href="#strategie">Stratégie</a>
         <a href="#radio">Radio</a>
+        <a href="#offres">Offres</a>
         <a href="#installer">Installer</a>
         <a href="#faq">FAQ</a>
       </nav>
@@ -371,7 +410,7 @@
         <div>
           <span class="eyebrow"><span class="dot"></span>iRacing · Le Mans Ultimate</span>
           <h1>Chaque dixième perdu a <span class="hl">une adresse.</span></h1>
-          <p class="lead">SEKTOR compare chaque passage à ton meilleur tour, virage par virage, et te dit à la voix où tu as perdu du temps et comment le reprendre. En course, il tient la stratégie : carburant, arrêt, bagarre, pneus, pluie.</p>
+          <p class="lead">SEKTOR compare chaque passage à ton meilleur tour, virage par virage, et te dit à la voix où tu as perdu du temps et comment le reprendre. Avec Pro, il devient ton ingénieur de course : stratégie, arrêt au stand, bagarre, pneus, pluie.</p>
           <div class="cta-row">
             <a class="btn btn-neon" href="https://github.com/AndyD9/Sektor/releases/latest">
               <svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 3v10m0 0 4-4m-4 4-4-4M4 16h12"/></svg>
@@ -381,7 +420,7 @@
           </div>
           <div class="reassure">
             <span><svg width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m4 10 4 4 8-8"/></svg>Calcul sur ton PC</span>
-            <span><svg width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m4 10 4 4 8-8"/></svg>Sans abonnement</span>
+            <span><svg width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m4 10 4 4 8-8"/></svg>Gratuit pour commencer</span>
             <span><svg width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m4 10 4 4 8-8"/></svg>Windows 10 et 11</span>
           </div>
         </div>
@@ -474,7 +513,7 @@
     <section class="block" id="theorique">
       <div class="wrap">
         <div class="section-head reveal">
-          <div class="kicker violet">Tour théorique</div>
+          <div class="kicker violet">Tour théorique <span class="plan-tag" title="Inclus dans SEKTOR Pro">Pro</span></div>
           <h2>Ce que ta voiture sait faire, sur ta trajectoire.</h2>
           <p>Après chaque tour valide, SEKTOR mesure la voiture : adhérence en virage et au freinage selon la vitesse, accélération à pleine charge. Puis il simule ta trajectoire à cette limite. Le résultat : un chrono, et virage par virage, la marge qu'il te reste.</p>
         </div>
@@ -505,9 +544,10 @@
     <section class="block" id="strategie">
       <div class="wrap">
         <div class="section-head reveal">
-          <div class="kicker">Stratégie de course</div>
+          <div class="kicker">Stratégie de course <span class="plan-tag" title="Inclus dans SEKTOR Pro">Pro</span></div>
           <h2>Quand rentrer, combien remettre, où tu ressors.</h2>
           <p>Pendant la course, SEKTOR lit six fois par seconde le carburant, les positions de tout le plateau, l'état de la piste et les pneus. Il en tire les décisions qu'un ingénieur prendrait au muret.</p>
+          <p class="free-note"><span class="plan-tag free">Gratuit</span>La consommation, les tours de carburant, les tours restants, les litres à remettre et les écarts devant et derrière. La stratégie complète et ses annonces sont dans Pro.</p>
         </div>
 
         <div class="shot reveal" style="margin-top:48px">
@@ -530,7 +570,7 @@
 
         <div class="card autopit reveal">
           <div class="autopit-text">
-            <div class="kicker blue">Arrêt automatique · iRacing</div>
+            <div class="kicker blue">Arrêt automatique · iRacing <span class="plan-tag" title="Inclus dans SEKTOR Pro">Pro</span></div>
             <h3>La bonne stratégie, réglée dans le jeu. Sans rien toucher.</h3>
             <p>Sur iRacing, SEKTOR ne se contente pas de te dire quoi faire : à l'entrée de la voie des stands, il règle lui-même dans le jeu le carburant de son plan et les pneus, à partir des données de ta course. Pas de boîte noire à ouvrir, pas de litres à compter en roulant : tu rentres, l'arrêt est déjà prêt, et l'ingénieur te l'annonce.</p>
             <ul class="autopit-list">
@@ -557,9 +597,10 @@
       <div class="wrap">
         <div class="split">
           <div class="reveal">
-            <div class="kicker blue">Radio ingénieur</div>
+            <div class="kicker blue">Radio ingénieur <span class="plan-tag" title="Inclus dans SEKTOR Pro">Pro</span></div>
             <h2>Un seul ingénieur. Il parle quand tu peux l'écouter.</h2>
             <p style="margin-top:20px;font-size:19px">Stratégie, bagarre, pilotage, réponses à tes questions : tout passe par la même radio, d'une seule voix, le chiffre d'abord.</p>
+            <p class="free-note"><span class="plan-tag free">Gratuit</span>Les annonces de pilotage et de carburant, avec la voix de Windows, et les réponses aux questions écrites courantes : écarts, carburant, tours, position. Parler à l'ingénieur, l'IA et la voix en ligne sont dans Pro.</p>
             <div class="features" style="margin-top:34px">
               <div class="feature">
                 <div class="ico" style="color:var(--accent-soft)"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 10h14M13 6l4 4-4 4"/></svg></div>
@@ -602,8 +643,8 @@
             <p class="sub">Rien à régler : lance le jeu, SEKTOR se connecte.</p>
             <ul>
               <li><b>Virages nommés</b> sur 271 tracés, d'après les repères de Crew Chief.</li>
-              <li><b>Stratégie complète</b> : carburant, arrêts du plateau, undercut, pluie, dégradation.</li>
-              <li><b>Arrêt automatique</b> : le carburant et les pneus du plan sont réglés dans le jeu à l'entrée des stands, sans intervention de ta part. À activer dans les réglages.</li>
+              <li><b>Stratégie complète</b> <span class="plan-tag" title="Inclus dans SEKTOR Pro">Pro</span> : carburant, arrêts du plateau, undercut, pluie, dégradation.</li>
+              <li><b>Arrêt automatique</b> <span class="plan-tag" title="Inclus dans SEKTOR Pro">Pro</span> : le carburant et les pneus du plan sont réglés dans le jeu à l'entrée des stands, sans intervention de ta part. À activer dans les réglages.</li>
               <li><b>Chronos fidèles</b> : 2,1 ms d'écart au plus avec ceux du simulateur.</li>
             </ul>
           </div>
@@ -629,11 +670,59 @@
           <h2>Ta télémétrie reste chez toi.</h2>
         </div>
         <div class="privacy">
-          <div class="card reveal"><svg class="ico" width="26" height="26" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="16" height="10" rx="1.5"/><path d="M7 17h6M10 14v3"/></svg><h3>Tout le calcul en local</h3><p>Coaching, tour théorique et stratégie tournent sur ta machine. Pas de compte en ligne, pas d'abonnement.</p></div>
-          <div class="card reveal"><svg class="ico" width="26" height="26" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2 3 6v4c0 4 3 7 7 8 4-1 7-4 7-8V6z"/></svg><h3>L'IA ne voit que des chiffres</h3><p>Le débrief et le point du tour envoient le circuit, la voiture, tes chronos et tes écarts. Jamais ton nom ni celui des autres pilotes.</p></div>
+          <div class="card reveal"><svg class="ico" width="26" height="26" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="16" height="10" rx="1.5"/><path d="M7 17h6M10 14v3"/></svg><h3>Tout le calcul en local</h3><p>Coaching, tour théorique et stratégie tournent sur ta machine. Pas de compte en ligne à créer : une clé suffit.</p></div>
+          <div class="card reveal"><svg class="ico" width="26" height="26" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2 3 6v4c0 4 3 7 7 8 4-1 7-4 7-8V6z"/></svg><h3>L'IA ne voit que des chiffres</h3><p>Avec Pro, le débrief, le point du tour et tes questions passent par l'IA : elle reçoit le circuit, la voiture, tes chronos et tes écarts. Jamais ton nom ni celui des autres pilotes.</p></div>
           <div class="card reveal"><svg class="ico" width="26" height="26" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="2" width="6" height="10" rx="3"/><path d="M4 9a6 6 0 0 0 12 0"/></svg><h3>Micro sous ton contrôle</h3><p>Ta voix n'est enregistrée que pendant que tu maintiens la touche, 30 secondes au plus.</p></div>
-          <div class="card reveal"><svg class="ico" width="26" height="26" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="7" cy="10" r="4"/><path d="M11 10h7M15 10v3"/></svg><h3>Une licence discrète</h3><p>Le serveur de licences ne reçoit que ta clé, une empreinte de l'ordinateur et le numéro de version. Ensuite, SEKTOR marche hors ligne.</p></div>
+          <div class="card reveal"><svg class="ico" width="26" height="26" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="7" cy="10" r="4"/><path d="M11 10h7M15 10v3"/></svg><h3>Une licence discrète</h3><p>Le serveur de licences ne reçoit que ta clé, une empreinte de l'ordinateur et le numéro de version. Ensuite, le coaching marche hors ligne.</p></div>
         </div>
+      </div>
+    </section>
+
+    <!-- ================= OFFRES ================= -->
+    <section class="block" id="offres">
+      <div class="wrap">
+        <div class="section-head reveal">
+          <div class="kicker">Offres</div>
+          <h2>Le coach est gratuit. L'ingénieur est Pro.</h2>
+          <p>Tout ce qui tourne sur ton PC pour t'apprendre à rouler plus vite est gratuit. Pro ajoute ce que fait un ingénieur de course : le tour théorique, la stratégie complète, l'arrêt réglé dans le jeu et la radio avec l'IA. Et sur un nouvel ordinateur, SEKTOR commence par 14 jours de Pro offerts.</p>
+        </div>
+        <div class="plans">
+          <div class="card plan reveal">
+            <div class="plan-top"><div class="label">Gratuit</div></div>
+            <h3>Le coach de pilotage</h3>
+            <div class="price"><span class="num">0 €</span><small>sans limite de durée</small></div>
+            <ul class="plan-list">
+              <li>Delta en direct face à ton meilleur tour, virage par virage, et overlay en jeu</li>
+              <li>Carte du circuit, virages nommés et télémétrie face à la référence</li>
+              <li>Débrief zone par zone</li>
+              <li>Annonces de pilotage et de carburant avec la voix de Windows</li>
+              <li>Carburant de base : consommation, tours restants, litres à remettre</li>
+              <li>Écarts devant et derrière dans le module Bagarre</li>
+              <li>Réponses immédiates aux questions écrites : écarts, carburant, tours, position</li>
+              <li>iRacing et Le Mans Ultimate</li>
+            </ul>
+            <a class="btn btn-ghost" href="https://github.com/AndyD9/Sektor/releases/latest">Télécharger gratuitement</a>
+          </div>
+          <div class="card plan plan-pro reveal">
+            <div class="plan-top"><div class="label">Pro</div><span class="plan-tag trial">14 jours offerts</span></div>
+            <h3>L'ingénieur de course</h3>
+            <!-- prix à confirmer -->
+            <div class="price"><span class="num">6,99 €</span><small>par mois, ou 59 € par an</small></div>
+            <ul class="plan-list">
+              <li>Tout ce que contient l'offre gratuite, plus :</li>
+              <li>Tour théorique : la limite de ta voiture sur ta trajectoire, et la marge virage par virage</li>
+              <li>Stratégie complète : fenêtre d'arrêt, position à la sortie, undercut, pneus, pluie, suivi du plateau</li>
+              <li>Arrêt automatique sur iRacing et arrêt demandé à la radio, réglés dans le jeu</li>
+              <li>Parler à l'ingénieur : questions dictées, réponses de l'IA, mémoire de la course</li>
+              <li>Commentaire de la bagarre à la radio</li>
+              <li>Voix en ligne, plus naturelle que celle de Windows</li>
+              <li>Débrief rédigé et point stratégique par l'IA</li>
+            </ul>
+            <a class="btn btn-neon" href="https://github.com/AndyD9/Sektor/releases/latest">Essayer Pro 14 jours</a>
+            <p class="plan-foot">L'essai est inclus au téléchargement, une fois par ordinateur, sans carte bancaire. À la fin, SEKTOR repasse tout seul en gratuit.</p>
+          </div>
+        </div>
+        <p class="note reveal">Le paiement en ligne n'est pas encore ouvert. Pour l'instant, le passage en Pro se fait à la main : ta clé gratuite passe en Pro, sans rien ressaisir, ou tu reçois une clé Pro à saisir dans les Réglages.</p>
       </div>
     </section>
 
@@ -647,7 +736,7 @@
         <div class="steps">
           <div class="card step reveal"><h3>Télécharge</h3><p>Prends l'installateur <code>SEKTOR_…_x64-setup.exe</code> dans la dernière version publiée.</p><p>Windows 10 ou 11, 64 bits. Rien d'autre à installer.</p></div>
           <div class="card step reveal"><h3>Installe</h3><p>L'installateur n'a pas encore de certificat Windows : au premier lancement, SmartScreen prévient. Clique sur « Informations complémentaires », puis « Exécuter quand même ».</p></div>
-          <div class="card step reveal"><h3>Active et roule</h3><p>Saisis ta clé de licence au premier lancement, puis lance iRacing ou Le Mans Ultimate. Boucle un tour propre : le coaching commence au suivant.</p></div>
+          <div class="card step reveal"><h3>Active et roule</h3><p>Au premier lancement, choisis « Commencer gratuitement » (14 jours de Pro offerts) ou saisis ta clé, puis lance iRacing ou Le Mans Ultimate. Boucle un tour propre : le coaching commence au suivant.</p></div>
         </div>
         <div class="card download reveal">
           <div class="t">
@@ -670,8 +759,9 @@
           <h2>Questions fréquentes</h2>
         </div>
         <div class="faq">
-          <details><summary>Faut-il une connexion pendant que je roule ?</summary><p>Non. La licence est confirmée en ligne au lancement, puis une fois par jour ; elle reste valable sept jours hors ligne. Le coaching, le tour théorique et la stratégie tournent sur ton PC. Seules les fonctions d'IA (débrief rédigé, point du tour, questions dictées) et la voix en ligne ont besoin d'Internet ; sans elles, la voix de Windows prend le relais.</p></details>
-          <details><summary>Comment obtenir une clé de licence ?</summary><p>SEKTOR est en phase de test : les clés sont délivrées aux testeurs. Une clé vaut pour un ordinateur ; si tu changes de machine, elle peut être libérée.</p></details>
+          <details><summary>Faut-il une connexion pendant que je roule ?</summary><p>Non. La licence est confirmée en ligne au lancement, puis une fois par jour ; elle reste valable sept jours hors ligne. Le coaching, le tour théorique et la stratégie tournent sur ton PC. Seules les fonctions d'IA de Pro (débrief rédigé, point du tour, questions dictées) et la voix en ligne ont besoin d'Internet ; sans elles, la voix de Windows prend le relais.</p></details>
+          <details><summary>Comment obtenir une clé de licence ?</summary><p>Il n'y a rien à demander pour commencer : au premier lancement, « Commencer gratuitement » crée ta clé, avec 14 jours de Pro offerts la première fois sur un ordinateur. Pour passer Pro, ta clé existante passe en Pro, sans rien ressaisir, ou tu reçois une clé Pro à saisir dans les Réglages. Une clé vaut pour un ordinateur ; si tu changes de machine, elle peut être libérée.</p></details>
+          <details><summary>Que se passe-t-il à la fin de l'essai Pro ?</summary><p>SEKTOR repasse tout seul en gratuit, sans rien te demander : aucun moyen de paiement n'est enregistré, rien n'est prélevé. Le coaching, la carte, le débrief zone par zone, le carburant de base et tes références restent ; le tour théorique, la stratégie complète, l'arrêt automatique et la radio avec l'IA se verrouillent jusqu'au passage en Pro.</p></details>
           <details><summary>Est-ce que ça marche avec toutes les voitures et tous les circuits ?</summary><p>Oui. La référence est enregistrée par simulateur, circuit et voiture. Les virages portent leur nom sur 271 tracés iRacing et 6 circuits Le Mans Ultimate ; ailleurs, ils sont numérotés.</p></details>
           <details><summary>Je joue en plein écran : je verrai l'overlay ?</summary><p>Pour voir l'overlay par-dessus le jeu, joue en fenêtre sans bordure plutôt qu'en plein écran exclusif. Le dashboard, lui, s'affiche dans sa propre fenêtre, par exemple sur un second écran.</p></details>
           <details><summary>Je peux parler à l'ingénieur avec un bouton du volant ?</summary><p>Les touches se changent dans les réglages (par exemple <kbd>F13</kbd> ou <kbd>Maj</kbd> <kbd>F9</kbd>). Associe ton bouton à cette touche avec le logiciel du volant ou un outil comme JoyToKey.</p></details>
