@@ -215,9 +215,6 @@
     .autopit-list li { position: relative; padding-left: 28px; color: var(--text-2); font-size: 16px; }
     .autopit-list li::before { content: ""; position: absolute; left: 2px; top: 6px; width: 12px; height: 7px; border-left: 2px solid var(--accent-soft); border-bottom: 2px solid var(--accent-soft); transform: rotate(-45deg); }
     .autopit-lmu { margin-top: 20px !important; display: flex; flex-wrap: wrap; align-items: center; gap: 10px; font-size: 15px; color: var(--muted) !important; }
-    .badge-dev { display: inline-flex; align-items: center; gap: 6px; padding: 5px 10px; border-radius: 999px; font: 600 12px/1 var(--font); letter-spacing: .06em; text-transform: uppercase;
-      color: var(--warn); background: rgba(255,179,65,.1); border: 1px solid rgba(255,179,65,.4); }
-    .badge-dev::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--warn); }
     .pitbox { border-radius: 12px; padding: 20px; background: #070b12; border: 1px solid var(--line-strong); box-shadow: inset 0 2px 4px rgba(0,0,0,.6); }
     .pitbox-head { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px; padding-bottom: 14px; border-bottom: 1px solid var(--line); }
     .pitbox .ok { display: inline-flex; align-items: center; gap: 7px; color: var(--gain); font-size: 13px; font-weight: 600; }
@@ -570,16 +567,16 @@
 
         <div class="card autopit reveal">
           <div class="autopit-text">
-            <div class="kicker blue">Arrêt automatique · iRacing <span class="plan-tag" title="Inclus dans SEKTOR Pro">Pro</span></div>
+            <div class="kicker blue">Arrêt automatique · iRacing et Le Mans Ultimate <span class="plan-tag" title="Inclus dans SEKTOR Pro">Pro</span></div>
             <h3>La bonne stratégie, réglée dans le jeu. Sans rien toucher.</h3>
-            <p>Sur iRacing, SEKTOR ne se contente pas de te dire quoi faire : à l'entrée de la voie des stands, il règle lui-même dans le jeu le carburant de son plan et les pneus, à partir des données de ta course. Pas de boîte noire à ouvrir, pas de litres à compter en roulant : tu rentres, l'arrêt est déjà prêt, et l'ingénieur te l'annonce.</p>
+            <p>Sur iRacing comme sur Le Mans Ultimate, SEKTOR ne se contente pas de te dire quoi faire : à l'entrée de la voie des stands, il règle lui-même dans le jeu le carburant de son plan et les pneus, à partir des données de ta course. Pas de boîte noire à ouvrir, pas de litres à compter en roulant : tu rentres, l'arrêt est déjà prêt, et l'ingénieur te l'annonce.</p>
             <ul class="autopit-list">
               <li>Carburant calculé sur ta consommation réelle, mesurée sur tes tours propres.</li>
               <li>Pneus changés si nécessaire, toujours ou jamais : c'est toi qui choisis.</li>
               <li>Tu gardes la main : ce que tu modifies ensuite dans la voie des stands est conservé.</li>
               <li>À activer une fois dans les Réglages (rubrique « Arrêt au stand ») : désactivé tant que tu ne l'as pas choisi.</li>
             </ul>
-            <p class="autopit-lmu"><span class="badge-dev">En développement</span> Sur Le Mans Ultimate, l'arrêt automatique est en cours de développement.</p>
+            <p class="autopit-lmu">Sur Le Mans Ultimate, l'énergie virtuelle et les pneus du plan sont réglés dans le menu des stands du jeu, par son API locale : rien à installer.</p>
           </div>
           <div class="pitbox" aria-label="Exemple d'arrêt réglé automatiquement dans iRacing">
             <div class="pitbox-head"><span class="label">Entrée des stands · T14</span><span class="ok"><i></i>Appliqué dans iRacing</span></div>
@@ -655,7 +652,7 @@
               <li><b>Énergie virtuelle</b> en Hypercar et en GT3 : le relais est calé sur la première ressource épuisée, carburant ou énergie.</li>
               <li><b>Usure des pneus en direct</b>, pneu par pneu, avec une alerte trois tours avant la limite.</li>
               <li><b>Limites de piste</b> : chaque point pris est annoncé, avec ce qu'il reste avant la pénalité.</li>
-              <li><b>Arrêt automatique</b> : <span class="badge-dev">En développement</span></li>
+              <li><b>Arrêt automatique</b> <span class="plan-tag" title="Inclus dans SEKTOR Pro">Pro</span> : l'énergie virtuelle et les pneus du plan sont réglés dans le menu des stands à l'entrée de la voie, et l'arrêt demandé à la radio aussi. À activer dans les réglages.</li>
             </ul>
           </div>
         </div>
@@ -712,7 +709,7 @@
               <li>Tout ce que contient l'offre gratuite, plus :</li>
               <li>Tour théorique : la limite de ta voiture sur ta trajectoire, et la marge virage par virage</li>
               <li>Stratégie complète : fenêtre d'arrêt, position à la sortie, undercut, pneus, pluie, suivi du plateau</li>
-              <li>Arrêt automatique sur iRacing et arrêt demandé à la radio, réglés dans le jeu</li>
+              <li>Arrêt automatique et arrêt demandé à la radio, réglés dans le jeu, sur iRacing et Le Mans Ultimate</li>
               <li>Parler à l'ingénieur : questions dictées, réponses de l'IA, mémoire de la course</li>
               <li>Commentaire de la bagarre à la radio</li>
               <li>Voix en ligne, plus naturelle que celle de Windows</li>
